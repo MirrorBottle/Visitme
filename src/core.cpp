@@ -34,7 +34,6 @@ int main() {
   bool is_master_running = false;
   int master_choice , main_choice;
 
-  kamar::edit();
   while(is_running) {
     main_choice = menuMain();
     switch (main_choice) {
@@ -51,7 +50,7 @@ int main() {
               kunjungan::menu();
               break;
             case 2:
-              napi::menu();
+              napi::index();
               break;
             case 3:
               kamar::index();

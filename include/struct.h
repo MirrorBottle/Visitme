@@ -8,5 +8,10 @@ namespace structure {
     string kode;
     string nama;
   };
+
+  struct napi {
+    string kode;
+    string nama;
+  };
 }
 

@@ -49,22 +49,34 @@ namespace kamar {
     }
   }
 
-  void update(structure::kamar kamar) {
-    string data[] = {"KMR-1", "Sesuatu"};
-    utility::update(PATH, NEW_FILE_PATH, 0, 2, "KMR-1", data);
+  void update(string identifier, structure::kamar kamar) {
+    string data[] = {kamar.kode, kamar.nama};
+    utility::update(PATH, NEW_FILE_PATH, 0, 2, identifier, data);
   }
 
   void edit() {
-    structure::kamar kamar;
-    utility::header("VISITME - TAMBAH KAMAR");
-    cout << "Kode Kamar: "; cin >> kamar.kode;
-    cout << "Nama Kamar: "; cin >> kamar.nama;
+    string code;
+    utility::header("VISITME - UBAH KAMAR");
+    cout << "Masukkan Kode Kamar: "; cin >> code;
     
-    vector<vector<string>> list = utility::search(PATH, 0, kamar.kode);
+    vector<vector<string>> list = utility::search(PATH, 0, code);
 
-    if(list.size() < 1) {
-      kamar::update(kamar);
-      utility::notify("success", "Kamar berhasil ditambahkan!");
+    if(list.size() > 0) {
+      utility::notify("success", "Kamar ditemukan");
+      utility::header("VISITME - UBAH KAMAR");
+
+      vector<string> old_kamar = list.front();
+      structure::kamar new_kamar;
+
+      utility::cout("yellow", "*Apabila tidak ada perubahan maka biarkan kosong!");
+
+      cout << "Kode Kamar [" + old_kamar[0] + "]: "; cin >> new_kamar.kode;
+      cout << "Nama Kamar [" + old_kamar[1] + "]: "; cin >> new_kamar.nama;
+      new_kamar.kode = new_kamar.kode != "" ? new_kamar.kode : old_kamar[0];
+      new_kamar.nama = new_kamar.nama != "" ? new_kamar.nama : old_kamar[1];
+
+      kamar::update(code, new_kamar);
+      utility::notify("success", "Kamar berhasil diubah!");
     } else {
       utility::notify("error", "Kamar dengan kode berikut sudah ada!");
     }
@@ -72,13 +84,18 @@ namespace kamar {
 
   void destroy() {
     string code;
+    bool is_confirmed;
     utility::header("VISITME - HAPUS KAMAR");
     cout << "Kode Kamar: "; cin >> code;
     
     vector<vector<string>> list = utility::search(PATH, 0, code);
 
-    if(list.size() < 0) {
-      utility::notify("success", "Kamar berhasil dihapus!");
+    if(list.size() > 0) {
+      is_confirmed = utility::confirm("kamar");
+      if(is_confirmed) {
+        utility::destroy(PATH, NEW_FILE_PATH, 0, 2, code);
+        utility::notify("success", "Kamar berhasil dihapus!");
+      }
     } else {
       utility::notify("error", "Kamar dengan kode berikut tidak ada!");
     }
@@ -89,7 +106,7 @@ namespace kamar {
     utility::header("VISITME - SORTING KAMAR");
     utility::cout("yellow", "Daftar kolom: ");
     for(int i = 1; i < TABLE_COLUMNS_LENGTH; i++) { 
-      utility::cout("yellow", to_string(i) + " " + TABLE_COLUMNS[i]);
+      utility::cout("yellow", to_string(i) + ". " + TABLE_COLUMNS[i]);
     }
     cout << "\nPilih kolom: "; cin >> column;
     cout << "Pilih tipe (1 = asc, 2 = desc): "; cin >> type;

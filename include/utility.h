@@ -24,11 +24,28 @@ namespace utility {
     with_endl ? std::cout << new_msg << endl : std::cout << new_msg;
   }
 
+  bool confirm(string message, bool is_formatted = true) {
+    string is_confirmed = "t";
+    string new_message = is_formatted ? "Data " + message + " tidak akan bisa dikembalikan lagi! (y/t): " : message;
+    std::cout << endl;
+    utility::cout("red", "Apa anda yakin?");
+    utility::cout("red", new_message, false);
+    cin >> is_confirmed;
+
+    return is_confirmed == "y" || is_confirmed == "Y";
+  }
+
   void header(string title) {
     // system("cls");
     utility::cout("cyan", "\n\n=================================");
     utility::cout("cyan", title);
     utility::cout("cyan", "=================================");
+  }
+
+  string toLower(string word) {
+    string transformed = word;
+    transform(transformed.begin(), transformed.end(), transformed.begin(), ::tolower);
+    return transformed;
   }
 
   void notify(string type, string message) {
@@ -73,21 +90,19 @@ namespace utility {
     vector<vector<string>> list = utility::list(path);
     string compared;
 
-    transform(keyword.begin(), keyword.end(), keyword.begin(), ::tolower);
+    keyword = utility::toLower(keyword);
 
     for(int index = 0; index < list.size(); index++) {
       // * IF THE FIELD IS -1, THEN IT MEANS AN UNIVERSAL SEARCH
       if(field == -1) {
         for(int second_index = 0; second_index < list[index].size(); second_index++) {
-          compared = list[index][second_index];
-          transform(compared.begin(), compared.end(), compared.begin(), ::tolower);
+          compared = utility::toLower(list[index][second_index]);
           if(compared == keyword) {
             filtered.push_back(list[index]);
           }
         }
       } else {
-        compared = list[index][field];
-        transform(compared.begin(), compared.end(), compared.begin(), ::tolower);
+        compared = utility::toLower(list[index][field]);
         if(compared == keyword) {
           filtered.push_back(list[index]);
         }
@@ -118,36 +133,50 @@ namespace utility {
     fstream file, newfile;
     file.open(path, ios::in);
     newfile.open(newpath, ios::out);
-    vector<vector<string>> content;
-    vector<string> row;
-    string line, word;
 
-    if(file.is_open()) {
-      while(getline(file, line)) {
-        row.clear();
-        stringstream str(line);
-        while(getline(str, word, ','))
-          row.push_back(word);
-        content.push_back(row);
+    keyword = utility::toLower(keyword);
+
+    vector<vector<string>> content = utility::list(path);
+    for(int row = 0; row < content.size(); row++) {
+      string val;
+      string compared = utility::toLower(content[row][field]);
+      if(compared != keyword) {
+        for(int col = 0; col < content[row].size(); col++) {
+          val += content[row][col] + ",";
+        }
+      } else {
+        for(int new_data_col = 0; new_data_col < field_length; new_data_col++) {
+          val += new_data[new_data_col] + ",";
+        }
       }
-      for(int row = 0; row < content.size(); row++) {
-        string val;
-        if(content[row][field] != keyword) {
-          for(int col = 0; col < content[row].size(); col++) {
-            val += content[row][col] + ",";
-          }
-        } else {
-          for(int new_data_col = 0; new_data_col < field_length; new_data_col++) {
-            val += new_data[new_data_col] + ",";
-          }
+      val += "\n";
+      newfile << val;
+    }
+    file.close();
+    newfile.close();
+    remove(path.c_str());
+    rename(newpath.c_str(), path.c_str());
+  }
+
+  void destroy(std::string path, std::string newpath, int field, int field_length, string keyword) {
+    fstream file, newfile;
+    file.open(path, ios::in);
+    newfile.open(newpath, ios::out);
+
+    keyword = utility::toLower(keyword);
+
+    vector<vector<string>> content = utility::list(path);
+    for(int row = 0; row < content.size(); row++) {
+      string val;
+      string compared = utility::toLower(content[row][field]);
+      if(compared != keyword) {
+        for(int col = 0; col < content[row].size(); col++) {
+          val += content[row][col] + ",";
         }
         val += "\n";
-        newfile << val;
       }
-    } else {
-      utility::notify("error", "File tidak ada!");
+      newfile << val;
     }
-
     file.close();
     newfile.close();
     remove(path.c_str());
