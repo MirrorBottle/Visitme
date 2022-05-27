@@ -8,10 +8,22 @@ namespace structure {
     string kode;
     string nama;
   };
-
-  struct napi {
+  struct wbp {
     string kode;
     string nama;
+  };
+
+  struct kunjungan {
+    string kode;
+    string kode_wbp;
+    string kode_kamar;
+    string tanggal;
+    string nama_pengunjung;
+    string nik_pengunjung;
+    int status;
+    string jam_mulai;
+    string jam_selesai;
+    string catatan;
   };
 }
 

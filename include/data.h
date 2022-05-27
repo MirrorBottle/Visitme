@@ -13,4 +13,10 @@ namespace data {
     { "blue", "\033[34m" },
     { "cyan", "\033[36m" }
   };
+
+  map<string, int> status_kunjungan = {
+    { "menunggu", 1 },
+    { "diterima", 2 },
+    { "ditolak", 3 },
+  };
 }

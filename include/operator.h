@@ -13,9 +13,9 @@
 #include "./menu.h"
 
 using namespace std;
-namespace kamar {
+namespace op {
   
-  const string PATH = "../files/kamar.csv";
+  const string PATH = "../files/operator.csv";
   const int TABLE_COLUMNS_LENGTH = 3;
   string TABLE_COLUMNS[] = {"No.", "Kode Kamar", "Nama Kamar"};
   
@@ -28,7 +28,7 @@ namespace kamar {
 
   void store(structure::kamar kamar) {
     fstream fout;
-    fout.open(PATH, ios::app);
+    fout.open(PATH, ios::out | ios::app);
     fout<< kamar.kode << ","
         << kamar.nama << "\n";
     fout.close();
@@ -39,6 +39,7 @@ namespace kamar {
     utility::header("VISITME - TAMBAH KAMAR");
     cout << "Kode Kamar: "; cin >> kamar.kode;
     cout << "Nama Kamar: "; cin >> kamar.nama;
+    
     vector<vector<string>> list = utility::search(PATH, { 0 }, kamar.kode);
 
     if(list.size() < 1) {
@@ -125,6 +126,26 @@ namespace kamar {
     } else {
       utility::notify("error", "Data tidak ditemukan!");
     }
+  }
+
+  bool login() {
+    bool is_login = false;
+    string username, password;
+    string cur_password, cur_username, hashed;
+    utility::header("VISITME - LOGIN OPERATOR");
+    cout << "Masukkan username: "; cin >> username;
+    cout << "Masukkan password: "; cin >> password;
+    vector<vector<string>> list = utility::list(PATH);
+
+    for(int row = 0; row < list.size(); row++) {
+      cur_password = utility::toLower(list[row][1]);
+      cur_username = utility::toLower(list[row][0]);
+      hashed = to_string(utility::hash(password));
+      if(cur_username == username && cur_password == hashed) {
+        is_login = true;
+      }
+    }
+    return is_login;
   }
 
   void index() {
