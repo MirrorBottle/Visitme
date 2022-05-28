@@ -24,6 +24,8 @@ namespace structure {
     string jam_mulai;
     string jam_selesai;
     string catatan;
+    kamar kamar;
+    wbp wbp;
   };
 }
 

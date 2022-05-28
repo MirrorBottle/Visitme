@@ -1,4 +1,4 @@
-
+#pragma once
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
@@ -17,6 +17,11 @@ namespace wbp {
   const int TABLE_COLUMNS_LENGTH = 3;
   string TABLE_COLUMNS[] = {"No.", "Kode WBP", "Nama WBP"};
   
+
+  string path() {
+    return PATH;
+  }
+
   void list() {
     utility::header("VISITME - DAFTAR WBP");
     vector<vector<string>> content = utility::list(PATH);

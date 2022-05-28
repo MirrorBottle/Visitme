@@ -24,7 +24,7 @@ int main() {
         kunjungan::create();
         break;
       case 2:
-        // kunjungan::check();
+        kunjungan::check();
         break;
       case 3:
         is_wbp_list_running = true;
@@ -55,7 +55,7 @@ int main() {
             main_choice = menu::main();
             switch (main_choice) {
               case 1:
-                kunjungan::create();
+                kunjungan::validate();
                 break;
               case 2:
                 is_master_running = true;
@@ -63,7 +63,7 @@ int main() {
                   master_choice = menu::master();
                   switch (master_choice) {
                     case 1:
-                      kunjungan::menu();
+                      kunjungan::index();
                       break;
                     case 2:
                       wbp::index();

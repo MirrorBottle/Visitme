@@ -35,7 +35,8 @@ namespace menu {
     cout  << "1. Kunjungan" << endl
           << "2. WBP" << endl
           << "3. Kamar" << endl
-          << "4. Kembali" << endl
+          << "4. Operator" << endl
+          << "5. Kembali" << endl
           << "Pilih : "; cin >> choice;
     return choice;
   }
@@ -48,6 +49,17 @@ namespace menu {
           << "2. Tambah Kamar" << endl
           << "3. Ubah Kamar" << endl
           << "4. Hapus Kamar" << endl
+          << "5. Kembali" << endl
+          << "Pilih : "; cin >> choice;
+    return choice;
+  }
+
+  int kunjungan() {
+    int choice;
+    utility::header("VISITME - MANAJEMEN KAMAR");
+    cout  << "1. Daftar Kunjungan" << endl
+          << "3. Ubah Kunjungan" << endl
+          << "4. Hapus Kunjungan" << endl
           << "5. Kembali" << endl
           << "Pilih : "; cin >> choice;
     return choice;

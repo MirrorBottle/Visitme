@@ -32,7 +32,7 @@ namespace utility {
     time(&curr_time);
     curr_tm = localtime(&curr_time);
     strftime(date_string, 50, "%Y-%m-%d", curr_tm);
-    return std::string(date_string);
+    return string(date_string);
   }
 
   bool confirm(string message, bool is_formatted = true) {
@@ -102,6 +102,7 @@ namespace utility {
     vector<vector<string>> content = utility::list(path);
     return content.back();
   }
+
   vector<vector<string>> search(string path, const std::initializer_list<int>& fields, string keyword) {
     vector<vector<string>> filtered;
     vector<vector<string>> list = utility::list(path);
@@ -115,20 +116,25 @@ namespace utility {
       if(is_universal) {
         for(int second_index = 0; second_index < list[index].size(); second_index++) {
           compared = utility::toLower(list[index][second_index]);
-          if(compared.find(keyword) != std::string::npos) {
+          if(compared.find(keyword) != string::npos) {
             filtered.push_back(list[index]);
           }
         }
       } else {
         for (auto field : fields) {
           compared = utility::toLower(list[index][field]);
-          if(compared.find(keyword) != std::string::npos) {
+          if(compared.find(keyword) != string::npos) {
             filtered.push_back(list[index]);
           }
         }
       }
     }
     return filtered;
+  }
+
+  vector<string> find(string path, const std::initializer_list<int>& fields, string keyword) {
+    vector<vector<string>> list = utility::search(path, fields, keyword);
+    return list.back();
   }
 
   vector<vector<string>> sort(string path, int field, int type) {
@@ -149,12 +155,13 @@ namespace utility {
     return list;
   }
 
-  void update(std::string path, int field, int field_length, string identifier, string new_data[]) {
+  void update(string path, int field, int field_length, string identifier, string new_data[]) {
     fstream file;
 
     identifier = utility::toLower(identifier);
 
     vector<vector<string>> content = utility::list(path);
+
     file.open(path, ios::out);
     for(int row = 0; row < content.size(); row++) {
       string val;
@@ -174,17 +181,18 @@ namespace utility {
     file.close();
   }
 
-  void destroy(std::string path, int field, int field_length, string keyword) {
+  void destroy(string path, int field, int field_length, string identifier) {
     fstream file;
-    file.open(path, ios::out);
-
-    keyword = utility::toLower(keyword);
+    
+    identifier = utility::toLower(identifier);
 
     vector<vector<string>> content = utility::list(path);
+
+    file.open(path, ios::out);
     for(int row = 0; row < content.size(); row++) {
       string val;
       string compared = utility::toLower(content[row][field]);
-      if(compared != keyword) {
+      if(compared != identifier) {
         for(int col = 0; col < content[row].size(); col++) {
           val += content[row][col] + ",";
         }

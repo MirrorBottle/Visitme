@@ -1,4 +1,4 @@
-
+#pragma once
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
@@ -19,6 +19,10 @@ namespace kamar {
   const int TABLE_COLUMNS_LENGTH = 3;
   string TABLE_COLUMNS[] = {"No.", "Kode Kamar", "Nama Kamar"};
   
+
+  string path() {
+    return PATH; 
+  }
   void list() {
     utility::header("VISITME - DAFTAR KAMAR");
     vector<vector<string>> content = utility::list(PATH);

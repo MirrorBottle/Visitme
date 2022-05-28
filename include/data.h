@@ -19,4 +19,16 @@ namespace data {
     { "diterima", 2 },
     { "ditolak", 3 },
   };
+
+  map<int, string> label_status_kunjungan = {
+    { 1, "MENUNGGU" },
+    { 2, "DITERIMA" },
+    { 3, "DITOLAK " },
+  };
+
+  map<int, string> color_status_kunjungan = {
+    { 1, "yellow" },
+    { 2, "green" },
+    { 3, "red" },
+  };
 }
