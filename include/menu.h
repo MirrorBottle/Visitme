@@ -23,8 +23,9 @@ namespace menu {
     int choice;
     utility::header("VISITME - MENU UTAMA");
     cout  << "1. Validasi Kunjungan" << endl
-          << "2. Data Master" << endl
-          << "3. Keluar" << endl
+          << "2. Jadwal Ketersediaan Kamar" << endl
+          << "3. Data Master" << endl
+          << "4. Keluar" << endl
           << "Pilih : "; cin >> choice;
     return choice;
   }

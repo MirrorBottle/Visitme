@@ -58,6 +58,9 @@ int main() {
                 kunjungan::validate();
                 break;
               case 2:
+                kamar::schedule();
+                break;
+              case 3:
                 is_master_running = true;
                 while(is_master_running) {
                   master_choice = menu::master();
@@ -77,7 +80,7 @@ int main() {
                   }
                 }
                 break;
-              case 3:
+              case 4:
                 is_main_running = false;
                 utility::notify("info", "Terima kasih!");
                 break;

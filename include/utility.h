@@ -36,10 +36,7 @@ namespace utility {
   }
 
   bool isTimeLater(string first, string second) {
-    first.erase(remove(first.begin(), first.end(), ':'), first.end());
-    second.erase(remove(second.begin(), second.end(), 'A'), second.end());
-
-    return stoi(first) > stoi(second);
+    return stoi(first) > stoi(second) ||  stoi(first) == stoi(second);
   }
 
   bool confirm(string message, bool is_formatted = true) {

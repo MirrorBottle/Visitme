@@ -9,6 +9,7 @@
 #include "./utility.h"
 #include "./struct.h"
 #include "./table.h"
+#include "./menu.h"
 
 using namespace std;
 namespace wbp {

@@ -143,6 +143,75 @@ namespace kamar {
     string today = utility::today();
     string start_time = data::operational["start"];
     string end_time = data::operational["end"];
+    vector<vector<string>> list = utility::list(PATH);
+
+    int total_hours = stoi(end_time) - stoi(start_time);
+    vector<string> hours;
+
+    hours.push_back(start_time);
+
+    int cur_hour = stoi(start_time);
+    for(int hourIdx; hourIdx < total_hours; hourIdx++) {
+      cur_hour = cur_hour + 1;
+      string hour = cur_hour < 10 ? "0" + to_string(cur_hour) : to_string(cur_hour);
+      hours.push_back(hour + ":00");
+    }
+    hours.push_back(end_time);
+    
+    string columns[20];
+    columns[0] = "No.";
+    columns[1] = "Nama Kamar";
+    for(int colIdx = 0; colIdx < hours.size(); colIdx++) {
+      columns[2 + colIdx] = hours[colIdx];
+    }
+
+    vector<vector<string>> today_visits = utility::search("../files/kunjungan.csv", { 2 }, today);
+    vector<vector<string>> schedules;
+
+    for(int roomIdx = 0; roomIdx < list.size(); roomIdx++) {
+
+      vector<string> schedule;
+      structure::kamar kamar = kamar::get(list[roomIdx]);
+      
+      schedule.push_back(kamar.nama);
+
+      vector<vector<string>> this_room_visits;
+
+      for(int visitIdx = 0; visitIdx < today_visits.size(); visitIdx++) {
+        vector<string> today_visit = today_visits[visitIdx];
+        if(today_visit[5] == "2" && today_visit[8] == kamar.kode) {
+          this_room_visits.push_back(today_visit);
+        }
+      }
+
+      for(int colIdx = 0; colIdx < hours.size(); colIdx++) {
+        bool is_found = false;
+        string hour = hours[colIdx];
+        
+
+        for(int visitIdx = 0; visitIdx < this_room_visits.size(); visitIdx++) {
+          vector<string> visit = this_room_visits[visitIdx];
+          bool isInsideStart = utility::isTimeLater(hour, visit[6]);
+          bool isInsideEnd = utility::isTimeLater(visit[7], hour);
+          if(isInsideStart && isInsideEnd) {
+            schedule.push_back(visit[0]);
+            is_found = true;
+          }
+        }
+        if(!is_found) {
+          schedule.push_back("-");
+        }
+      }
+
+      schedules.push_back(schedule);
+    }
+
+    utility::header("VISITME - JADWAL KETERSEDIAAN KAMAR");
+    utility::cout("yellow", "Tanggal Hari Ini: " + today);
+    TextTable table = utility::table(hours.size() + 1, schedules.size(), columns, schedules);
+    cout << table;
+    cout << endl;
+    utility::notify("success", "Untuk Kembali");
   }
 
   void index() {

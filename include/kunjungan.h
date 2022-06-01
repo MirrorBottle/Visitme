@@ -9,15 +9,19 @@
 #include "./utility.h"
 #include "./struct.h"
 #include "./wbp.h"
+#include "./menu.h"
 #include "./kamar.h"
 
 using namespace std;
+
 namespace kunjungan {
   const string PATH = "../files/kunjungan.csv";
   const int TABLE_COLUMNS_LENGTH = 11;
   string TABLE_COLUMNS[] = {"No.", "Kode", "WBP", "Tanggal", "Nama", "NIK", "Status", "Jam Mulai", "Jam Selesai", "Kode Kamar", "Catatan"};
 
-
+  string path() {
+    return PATH;
+  }
 
   vector<vector<string>> formatter(vector<vector<string>> list) {
 
@@ -267,6 +271,22 @@ namespace kunjungan {
     return make_tuple(found_kamar, jam_mulai, jam_selesai);
   }
 
+  void update(string identifier, structure::kunjungan kunjungan) {
+    string data[] = {
+        kunjungan.kode, 
+        kunjungan.kode_wbp,
+        kunjungan.tanggal,
+        kunjungan.nama_pengunjung,
+        kunjungan.nik_pengunjung,
+        to_string(kunjungan.status),
+        kunjungan.jam_mulai,
+        kunjungan.jam_selesai,
+        kunjungan.kode_kamar,
+        kunjungan.catatan
+      };
+      utility::update(PATH, 0, 10, identifier, data);
+  }
+
   void validate() {
     utility::header("VISITME - VALIDASI KUNJUNGAN");
 
@@ -320,20 +340,7 @@ namespace kunjungan {
         kunjungan.catatan = catatan;
         utility::notify("success", "Kunjungan berhasil ditolak!");
       }
-
-      string data[] = {
-        kunjungan.kode, 
-        kunjungan.kode_wbp,
-        kunjungan.tanggal,
-        kunjungan.nama_pengunjung,
-        kunjungan.nik_pengunjung,
-        to_string(kunjungan.status),
-        kunjungan.jam_mulai,
-        kunjungan.jam_selesai,
-        kunjungan.kode_kamar,
-        kunjungan.catatan
-      };
-      utility::update(PATH, 0, 10, kunjungan.kode, data);
+      kunjungan::update(kunjungan.kode, kunjungan);
       
     } else {
       utility::notify("error", "Kode Kunjungan Tidak Ada!");
@@ -342,11 +349,32 @@ namespace kunjungan {
   }
 
   void edit() {
+    string code;
+    utility::header("VISITME - UBAH KUNJUNGAN");
+    utility::cout("yellow", "*Kunjungan yang bisa diubah hanya kunjungan yang sudah berlalu!");
+    cout << "Masukkan Kode Kunjungan: "; cin >> code;
+    
+    vector<string> kunjungan_raw = utility::find(PATH, { 0 }, code);
+    if(!kunjungan_raw.empty()) {
+      utility::notify("success", "Kunjungan ditemukan");
+      utility::header("VISITME - UBAH KUNJUNGAN");
 
-  }
+      structure::kunjungan old_kunjungan = kunjungan::get(kunjungan_raw);
+      structure::kunjungan new_kunjungan = old_kunjungan;
 
-  void update() {
+      utility::cout("yellow", "*Apabila tidak ada perubahan maka isi dengan '-'!");
 
+      cout << "Nama Pengunjung [" + old_kunjungan.nama_pengunjung + "]: "; cin >> new_kunjungan.nama_pengunjung;
+      cout << "NIK Pengunjung [" + old_kunjungan.nik_pengunjung + "]: "; cin >> new_kunjungan.nik_pengunjung;
+      
+      new_kunjungan.nama_pengunjung = new_kunjungan.nama_pengunjung != "-" ? new_kunjungan.nama_pengunjung : old_kunjungan.nama_pengunjung;
+      new_kunjungan.nik_pengunjung = new_kunjungan.nik_pengunjung != "-" ? new_kunjungan.nik_pengunjung : old_kunjungan.nik_pengunjung;
+
+      kunjungan::update(old_kunjungan.kode, new_kunjungan);
+      utility::notify("success", "Kunjungan berhasil diubah!");
+    } else {
+      utility::notify("error", "Kunjungan dengan kode tersebut tidak ada!");
+    }
   }
 
   void destroy() {
