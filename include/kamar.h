@@ -23,11 +23,19 @@ namespace kamar {
   string path() {
     return PATH; 
   }
+
   void list() {
     utility::header("VISITME - DAFTAR KAMAR");
     vector<vector<string>> content = utility::list(PATH);
     TextTable table = utility::table(TABLE_COLUMNS_LENGTH, content.size(), TABLE_COLUMNS, content);
     cout << table;
+  }
+
+  structure::kamar get(vector<string> data) {
+    structure::kamar kamar;
+    kamar.kode = data[0];
+    kamar.nama = data[1];
+    return kamar;
   }
 
   void store(structure::kamar kamar) {
@@ -122,13 +130,19 @@ namespace kamar {
     string keyword;
     utility::header("VISITME - CARI KAMAR");
     cout << "Kata kunci pencarian: "; cin >> keyword;
-    vector<vector<string>> list = utility::search(PATH, { -1 }, keyword);
+    vector<vector<string>> list = utility::search(PATH, { 0 }, keyword, true);
     if(list.size() > 0) {
       TextTable table = utility::table(TABLE_COLUMNS_LENGTH, list.size(), TABLE_COLUMNS, list);
       cout << table;
     } else {
       utility::notify("error", "Data tidak ditemukan!");
     }
+  }
+
+  void schedule() {
+    string today = utility::today();
+    string start_time = data::operational["start"];
+    string end_time = data::operational["end"];
   }
 
   void index() {
@@ -140,7 +154,6 @@ namespace kamar {
 
       switch (choice) {
         case 1:
-
           list_choice;
           is_list_running = true;
           kamar::list();

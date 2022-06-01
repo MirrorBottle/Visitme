@@ -11,7 +11,8 @@ namespace data {
     { "green", "\033[32m" },
     { "yellow", "\033[33m" },
     { "blue", "\033[34m" },
-    { "cyan", "\033[36m" }
+    { "cyan", "\033[36m" },
+    { "white", "\033[37m" }
   };
 
   map<string, int> status_kunjungan = {
@@ -30,5 +31,10 @@ namespace data {
     { 1, "yellow" },
     { 2, "green" },
     { 3, "red" },
+  };
+
+  map<string, string> operational = {
+    { "start", "09:00" },
+    { "end", "16:00" }
   };
 }

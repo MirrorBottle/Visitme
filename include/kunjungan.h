@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <ctime>
+#include <tuple>
 
 #include "./utility.h"
 #include "./struct.h"
@@ -118,12 +119,29 @@ namespace kunjungan {
     utility::notify("success", "Berhasil Melakukan Registrasi, Kode Kunjungan: [" + kunjungan.kode + "]");
   }
 
+  structure::wbp get_wbp() {
+    vector<string> wbp;
+    string kode_wbp;
+  
+    cout << "Masukkan Kode WBP: "; cin >> kode_wbp;
+    wbp = utility::find(wbp::path(), { 0 }, kode_wbp);
+
+    if(wbp.empty()) {
+      utility::notify("error", "Kode WBP tidak terdaftar!");
+      get_wbp();
+    }
+
+    utility::cout("green", "WBP Ditemukan: [" + wbp[1] + "]!");
+    structure::wbp found_wbp = wbp::get(wbp);
+    return found_wbp;
+  }
+
   void create() {
     bool is_not_exist = true;
-    bool is_wbp_exist = false;
+    bool check_wbp = false;
     string today = utility::today();
-    string wbp_path = wbp::path();
     structure::kunjungan kunjungan;
+    structure::wbp wbp;
     utility::header("VISITME - REGISTRASI KUNJUNGAN");
     utility::cout("yellow", "*Kunjungan hanya bisa dilakukan sekali sehari!");
     utility::cout("yellow", "*Cek status kunjungan anda secara berkala!\n");
@@ -142,18 +160,8 @@ namespace kunjungan {
     }
 
     if (is_not_exist) {
-      vector<string> wbp;
-      while(!is_wbp_exist) {
-        cout << "Masukkan Kode WBP: "; cin >> kunjungan.kode_wbp;
-        wbp = utility::find(wbp_path, { 0 }, kunjungan.kode_wbp);
-        if(!wbp.empty()) {
-          is_wbp_exist = true;
-          utility::cout("green", "WBP Ditemukan: [" + wbp[1] + "]!");
-        } else {
-          utility::notify("error", "Kode WBP tidak terdaftar!");
-        }
-      }
-      kunjungan.kode_wbp = wbp[0];
+      wbp = get_wbp();
+      kunjungan.kode_wbp = wbp.kode;
       cout << "Masukkan Nama Anda: "; fflush(stdin);
       getline(cin, kunjungan.nama_pengunjung);
       kunjungan::store(kunjungan);
@@ -168,6 +176,7 @@ namespace kunjungan {
     cout << "Masukkan Kode Kunjungan / NIK Anda: "; cin >> keyword;
     vector<vector<string>> list = utility::search(PATH, { 0, 4 }, keyword);
 
+    utility::header("VISITME - CEK STATUS KUNJUNGAN");
     if(list.size() > 0) {
       for(int index = 0; index < list.size(); index++) {
         string description;
@@ -198,14 +207,138 @@ namespace kunjungan {
         utility::cout(label_color, label_status);
         cout << "Keterangan: " << description << endl << endl;
       }
+      utility::notify("success", "Berhasil menampilkan daftar kunjungan!");
     } else {
       utility::notify("error", "Tidak ada kunjungan!");
     }
-    getch();
+  }
+
+  vector<vector<string>> validate_formatter(vector<vector<string>> list) {
+    vector<vector<string>> formatted;
+    for(int rowIdx = 0; rowIdx < list.size(); rowIdx++) {
+      vector<string> row = list[rowIdx];
+      vector<string> wbp = utility::find(wbp::path(), { 0 }, row[1]);
+
+      row[1] = row[1] + " [" + wbp[1] + "]";
+      formatted.push_back(row);
+    }
+    return formatted;
+  }
+
+  tuple<structure::kamar, string, string> get_availability(string kode_kunjungan) {
+    
+    string kode_kamar, jam_mulai, jam_selesai;
+    string today = utility::today();
+
+    cout << "Masukkan Kode kamar: "; cin >> kode_kamar;
+    vector<string> kamar = utility::find(kamar::path(), { 0 }, kode_kamar);
+
+    // ** CHECK IF IS THERE A ROOM
+    if(kamar.empty()) {
+      utility::notify("error", "Kode kamar tidak terdaftar!");
+      get_availability(kode_kunjungan);
+    }
+
+    // ** GET START AND AND TIME
+    cout << "Masukkan jam mulai (hh:mm): "; cin >> jam_mulai;
+    cout << "Masukkan jam selesai (hh:mm): "; cin >> jam_selesai;
+
+    // ** GET TODAY VISITS
+    structure::kamar found_kamar = kamar::get(kamar);
+    vector<vector<string>> today_visits = utility::search(PATH, { 2 }, today);
+
+    if(!today_visits.empty()) {
+      
+      for(int visitIdx = 0; visitIdx < today_visits.size(); visitIdx++) {
+        structure::kunjungan curr_today_visit = kunjungan::get(today_visits[visitIdx]);
+
+        if(curr_today_visit.kode != kode_kunjungan && curr_today_visit.status == 2 && curr_today_visit.kode_kamar == found_kamar.kode) {
+          bool isInsideStart = utility::isTimeLater(jam_mulai, curr_today_visit.jam_mulai);
+          bool isInsideEnd = utility::isTimeLater(curr_today_visit.jam_selesai, jam_selesai);
+
+          if(isInsideStart && isInsideEnd)  {
+            utility::notify("error", "Kamar sudah terisi!");
+            get_availability(kode_kunjungan);
+          }
+        }
+      }
+    }
+    utility::cout("green", "Kamar ditemukan dan tersedia: [" + kamar[1] + "]!");
+    return make_tuple(found_kamar, jam_mulai, jam_selesai);
   }
 
   void validate() {
+    utility::header("VISITME - VALIDASI KUNJUNGAN");
 
+    string kode;
+    string validate_table_columns[] = {"No.", "Kode", "WBP", "Tanggal", "Nama", "NIK"};
+    int validate_columns_length = 6;
+
+    vector<vector<string>> content = utility::search(PATH, { 5 }, "1");
+
+    vector<vector<string>> list = kunjungan::validate_formatter(content);
+    TextTable table = utility::table(validate_columns_length, list.size(), validate_table_columns, list);
+    utility::cout("yellow", "Kunjungan yang belum divalidasi: ");
+
+    cout << table << endl;
+    cout << "Masukkan kode kunjungan: "; cin >> kode;
+
+    vector<string> kunjungan_raw = utility::find(PATH, { 0 }, kode);
+
+    if(!kunjungan_raw.empty()) {
+      structure::kunjungan kunjungan = kunjungan::get(kunjungan_raw);
+      structure::kamar kamar;
+      utility::notify("success", "Kunjungan ditemukan!");
+      utility::header("VISITME - VALIDASI KUNJUNGAN");
+
+      string status, jam_mulai, jam_selesai, kode_kamar, catatan;
+      bool is_status_validate_pass, is_room_not_available = true;
+
+      while(!is_status_validate_pass) {
+        utility::cout("white", "Pilih status kunjungan ", false);
+        utility::cout("green", "2 [DITERIMA] ", false);
+        utility::cout("white", "/", false);
+        utility::cout("red", " 3 [DITOLAK]: ", false);
+        cin >> status;
+
+        if(status == "2" || status == "3") {
+          is_status_validate_pass = true;
+        }
+      }
+
+      if(status == "2") {
+        tie(kamar, jam_mulai, jam_selesai) = get_availability(kode);
+        kunjungan.kode_kamar = kamar.kode;
+        kunjungan.jam_mulai = jam_mulai;
+        kunjungan.jam_selesai = jam_selesai;
+        kunjungan.status = 2;
+
+        utility::notify("success", "Kunjungan berhasil divalidasi");
+      } else {
+        cout << "Masukkan catatan penolakan: "; cin >>catatan;
+        kunjungan.status = 3;
+        kunjungan.catatan = catatan;
+        utility::notify("success", "Kunjungan berhasil ditolak!");
+      }
+
+      string data[] = {
+        kunjungan.kode, 
+        kunjungan.kode_wbp,
+        kunjungan.tanggal,
+        kunjungan.nama_pengunjung,
+        kunjungan.nik_pengunjung,
+        to_string(kunjungan.status),
+        kunjungan.jam_mulai,
+        kunjungan.jam_selesai,
+        kunjungan.kode_kamar,
+        kunjungan.catatan
+      };
+      utility::update(PATH, 0, 10, kunjungan.kode, data);
+      
+    } else {
+      utility::notify("error", "Kode Kunjungan Tidak Ada!");
+    }
+    
   }
 
   void edit() {
@@ -217,7 +350,22 @@ namespace kunjungan {
   }
 
   void destroy() {
+    string code;
+    bool is_confirmed;
+    utility::header("VISITME - HAPUS KUNJUNGAN");
+    cout << "Kode Kunjungan: "; cin >> code;
+    
+    vector<vector<string>> list = utility::search(PATH, { 0 }, code);
 
+    if(list.size() > 0) {
+      is_confirmed = utility::confirm("kunjungan");
+      if(is_confirmed) {
+        utility::destroy(PATH, 0, 2, code);
+        utility::notify("success", "Kunjungan berhasil dihapus!");
+      }
+    } else {
+      utility::notify("error", "Kunjungan dengan kode tersebut tidak ada!");
+    }
   }
 
   void sort() {
@@ -238,7 +386,7 @@ namespace kunjungan {
     string keyword;
     utility::header("VISITME - CARI KUNJUNGAN");
     cout << "Kata kunci pencarian: "; cin >> keyword;
-    vector<vector<string>> list = utility::search(PATH, { -1 }, keyword);
+    vector<vector<string>> list = utility::search(PATH, { 0 }, keyword, true);
     if(list.size() > 0) {
       TextTable table = utility::table(TABLE_COLUMNS_LENGTH, list.size(), TABLE_COLUMNS, list);
       cout << table;
@@ -277,15 +425,12 @@ namespace kunjungan {
           }
           break;
         case 2:
-          kunjungan::create();
-          break;
-        case 3:
           kunjungan::edit();
           break;
-        case 4:
+        case 3:
           kunjungan::destroy();
           break;
-        case 5:
+        case 4:
           is_running = false;
           break;
         default:

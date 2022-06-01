@@ -35,6 +35,13 @@ namespace utility {
     return string(date_string);
   }
 
+  bool isTimeLater(string first, string second) {
+    first.erase(remove(first.begin(), first.end(), ':'), first.end());
+    second.erase(remove(second.begin(), second.end(), 'A'), second.end());
+
+    return stoi(first) > stoi(second);
+  }
+
   bool confirm(string message, bool is_formatted = true) {
     string is_confirmed = "t";
     string new_message = is_formatted ? "Data " + message + " tidak akan bisa dikembalikan lagi! (y/t): " : message;
@@ -103,16 +110,15 @@ namespace utility {
     return content.back();
   }
 
-  vector<vector<string>> search(string path, const std::initializer_list<int>& fields, string keyword) {
+  vector<vector<string>> search(string path, const std::initializer_list<int>& fields, string keyword, bool is_universal = false, bool is_exact = false) {
     vector<vector<string>> filtered;
     vector<vector<string>> list = utility::list(path);
     string compared;
+    bool condition;
 
-    bool is_universal = std::find(fields.begin(), fields.end(), -1);
     keyword = utility::toLower(keyword);
 
     for(int index = 0; index < list.size(); index++) {
-      // * IF THE FIELD IS -1, THEN IT MEANS AN UNIVERSAL SEARCH
       if(is_universal) {
         for(int second_index = 0; second_index < list[index].size(); second_index++) {
           compared = utility::toLower(list[index][second_index]);
@@ -123,7 +129,8 @@ namespace utility {
       } else {
         for (auto field : fields) {
           compared = utility::toLower(list[index][field]);
-          if(compared.find(keyword) != string::npos) {
+          condition = is_exact ? (compared == keyword) : (compared.find(keyword) != string::npos);
+          if(condition) {
             filtered.push_back(list[index]);
           }
         }
@@ -132,9 +139,10 @@ namespace utility {
     return filtered;
   }
 
-  vector<string> find(string path, const std::initializer_list<int>& fields, string keyword) {
-    vector<vector<string>> list = utility::search(path, fields, keyword);
-    return list.back();
+  vector<string> find(string path, const std::initializer_list<int>& fields, string keyword, bool is_exact = false) {
+    vector<string> empty;
+    vector<vector<string>> list = utility::search(path, fields, keyword, false, true);
+    return list.empty() ? empty : list.back();
   }
 
   vector<vector<string>> sort(string path, int field, int type) {

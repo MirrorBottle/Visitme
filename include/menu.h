@@ -35,8 +35,7 @@ namespace menu {
     cout  << "1. Kunjungan" << endl
           << "2. WBP" << endl
           << "3. Kamar" << endl
-          << "4. Operator" << endl
-          << "5. Kembali" << endl
+          << "4. Kembali" << endl
           << "Pilih : "; cin >> choice;
     return choice;
   }
@@ -58,9 +57,18 @@ namespace menu {
     int choice;
     utility::header("VISITME - MANAJEMEN KAMAR");
     cout  << "1. Daftar Kunjungan" << endl
-          << "3. Ubah Kunjungan" << endl
-          << "4. Hapus Kunjungan" << endl
-          << "5. Kembali" << endl
+          << "2. Ubah Kunjungan" << endl
+          << "3. Hapus Kunjungan" << endl
+          << "4. Kembali" << endl
+          << "Pilih : "; cin >> choice;
+    return choice;
+  }
+
+  int wbp() {
+    int choice;
+    utility::header("VISITME - MANAJEMEN WBP");
+    cout  << "1. Daftar WBP" << endl
+          << "2. Keluar" << endl
           << "Pilih : "; cin >> choice;
     return choice;
   }
@@ -71,6 +79,11 @@ namespace menu {
     utility::cout("black", "\nApa yang ingin anda lakukan :");
     utility::cout("yellow", "1. Sorting     2. Searching    3. Kembali");
     cout << "Pilih : "; cin >> choice;
+
+    if(choice > 3 || choice < 1) {
+      utility::notify("error", "Pilihan tidak ada!");
+      searching();
+    }
     return choice;
   }
 

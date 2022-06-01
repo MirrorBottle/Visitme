@@ -60,13 +60,11 @@ namespace op {
     utility::header("VISITME - UBAH KAMAR");
     cout << "Masukkan Kode Kamar: "; cin >> code;
     
-    vector<vector<string>> list = utility::search(PATH, { 0 }, code);
+    vector<string> old_kamar = utility::find(PATH, { 0 }, code);
 
-    if(list.size() > 0) {
+    if(old_kamar.empty()) {
       utility::notify("success", "Kamar ditemukan");
       utility::header("VISITME - UBAH KAMAR");
-
-      vector<string> old_kamar = list.front();
       structure::kamar new_kamar;
 
       utility::cout("yellow", "*Apabila tidak ada perubahan maka isi dengan '-'!");
@@ -119,7 +117,7 @@ namespace op {
     string keyword;
     utility::header("VISITME - CARI KAMAR");
     cout << "Kata kunci pencarian: "; cin >> keyword;
-    vector<vector<string>> list = utility::search(PATH, { -1 }, keyword);
+    vector<vector<string>> list = utility::search(PATH, { 0 }, keyword, true);
     if(list.size() > 0) {
       TextTable table = utility::table(TABLE_COLUMNS_LENGTH, list.size(), TABLE_COLUMNS, list);
       cout << table;
