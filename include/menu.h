@@ -2,14 +2,25 @@
 
 #include <iostream>
 #include <tuple>
+#include <ctype.h>
 
 #include "../include/utility.h"
 
 using namespace std;
 namespace menu {
+  int check(string choice) {
+    try {
+      int int_choice = stoi(choice);
+      return int_choice;
+    } 
+    catch (...) {
+      cin.clear(); 
+      return 0;
+    }
+  }
   // ** FOR THE MAIN
   int guess() {
-    int choice;
+    string choice;
     utility::header("VISITME - KUNJUNGAN LAPAS");
     cout  << "1. Registrasi Kunjungan" << endl
           << "2. Cek Status Kunjungan" << endl
@@ -17,33 +28,34 @@ namespace menu {
           << "4. Masuk Sebagai Operator" << endl
           << "5. Keluar" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
+    
   }
   int main() {
-    int choice;
+    string choice;
     utility::header("VISITME - MENU UTAMA");
     cout  << "1. Validasi Kunjungan" << endl
           << "2. Jadwal Ketersediaan Kamar" << endl
           << "3. Data Master" << endl
           << "4. Keluar" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
   }
 
   int master() {
-    int choice;
+    string choice;
     utility::header("VISITME - DATA MASTER");
     cout  << "1. Kunjungan" << endl
           << "2. WBP" << endl
           << "3. Kamar" << endl
           << "4. Kembali" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
   }
 
   // ** FOR THE ENTITIES
   int kamar() {
-    int choice;
+    string choice;
     utility::header("VISITME - MANAJEMEN KAMAR");
     cout  << "1. Daftar Kamar" << endl
           << "2. Tambah Kamar" << endl
@@ -51,41 +63,36 @@ namespace menu {
           << "4. Hapus Kamar" << endl
           << "5. Kembali" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
   }
 
   int kunjungan() {
-    int choice;
+    string choice;
     utility::header("VISITME - MANAJEMEN KAMAR");
     cout  << "1. Daftar Kunjungan" << endl
           << "2. Ubah Kunjungan" << endl
           << "3. Hapus Kunjungan" << endl
           << "4. Kembali" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
   }
 
   int wbp() {
-    int choice;
+    string choice;
     utility::header("VISITME - MANAJEMEN WBP");
     cout  << "1. Daftar WBP" << endl
           << "2. Keluar" << endl
           << "Pilih : "; cin >> choice;
-    return choice;
+    return check(choice);
   }
 
   // ** FOR OTHERS
   int searching() {
-    int choice;
+    string choice;
     utility::cout("black", "\nApa yang ingin anda lakukan :");
-    utility::cout("yellow", "1. Sorting     2. Searching    3. Kembali");
+    utility::cout("yellow", "1. Sorting     2. Searching    3. Reset    4. Kembali");
     cout << "Pilih : "; cin >> choice;
-
-    if(choice > 3 || choice < 1) {
-      utility::notify("error", "Pilihan tidak ada!");
-      searching();
-    }
-    return choice;
+    return check(choice);
   }
 
   tuple<int, int> sorting(string columns[], int length) {

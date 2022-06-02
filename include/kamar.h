@@ -223,10 +223,8 @@ namespace kamar {
 
       switch (choice) {
         case 1:
-          list_choice;
           is_list_running = true;
           kamar::list();
-          
           while(is_list_running) {
             list_choice = menu::searching();
             switch (list_choice) {
@@ -237,6 +235,9 @@ namespace kamar {
                 kamar::search();
                 break;
               case 3:
+                kamar::list();
+                break;
+              case 4:
                 is_list_running = false;
                 break;
             }

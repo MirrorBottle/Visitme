@@ -30,9 +30,7 @@ int main() {
         is_wbp_list_running = true;
         wbp::list();
         while(is_wbp_list_running) {
-          utility::cout("black", "\nApa yang ingin anda lakukan :");
-          utility::cout("yellow", "1. Sorting     2. Searching    3. Kembali");
-          cout << "Pilih : "; cin >> wbp_list_choice;
+          wbp_list_choice = menu::searching();;
           switch (wbp_list_choice) {
             case 1:
               wbp::sort();
@@ -41,6 +39,9 @@ int main() {
               wbp::search();
               break;
             case 3:
+              wbp::list();
+              break;
+            case 4:
               is_wbp_list_running = false;
               break;
           }

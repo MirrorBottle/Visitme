@@ -30,6 +30,7 @@ namespace kunjungan {
       vector<string> row = list[rowIdx];
 
       string col_data;
+
       for(int colIdx = 0; colIdx < TABLE_COLUMNS_LENGTH - 1; colIdx++) {
         col_data = row[colIdx];
         if(colIdx == 1) {
@@ -49,6 +50,7 @@ namespace kunjungan {
           }
         }
       }
+      
 
       formatted.push_back(row);
     }
@@ -432,11 +434,8 @@ namespace kunjungan {
 
       switch (choice) {
         case 1:
-
-          list_choice;
           is_list_running = true;
           kunjungan::list();
-          
           while(is_list_running) {
             list_choice = menu::searching();
             switch (list_choice) {
@@ -447,6 +446,9 @@ namespace kunjungan {
                 kunjungan::search();
                 break;
               case 3:
+                kunjungan::list();
+                break;
+              case 4:
                 is_list_running = false;
                 break;
             }

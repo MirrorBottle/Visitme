@@ -91,6 +91,9 @@ namespace wbp {
                 wbp::search();
                 break;
               case 3:
+                wbp::list();
+                break;
+              case 4:
                 is_list_running = false;
                 break;
             }
