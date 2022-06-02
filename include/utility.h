@@ -136,9 +136,9 @@ namespace utility {
     return filtered;
   }
 
-  vector<string> find(string path, const std::initializer_list<int>& fields, string keyword, bool is_exact = false) {
+  vector<string> find(string path, const std::initializer_list<int>& fields, string keyword, bool is_exact = true) {
     vector<string> empty;
-    vector<vector<string>> list = utility::search(path, fields, keyword, false, true);
+    vector<vector<string>> list = utility::search(path, fields, keyword, false, is_exact);
     return list.empty() ? empty : list.back();
   }
 

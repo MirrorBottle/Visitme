@@ -39,11 +39,11 @@ namespace kamar {
   }
 
   void store(structure::kamar kamar) {
-    fstream fout;
-    fout.open(PATH, ios::app);
-    fout<< kamar.kode << ","
+    fstream file;
+    file.open(PATH, ios::app);
+    file<< kamar.kode << ","
         << kamar.nama << "\n";
-    fout.close();
+    file.close();
   }
 
   void create() {

@@ -154,11 +154,11 @@ namespace kunjungan {
     cout << "Masukkan NIK Anda: "; cin >> kunjungan.nik_pengunjung;
 
     // ** CHECK IF USER ALREADY REGIST TODAY
-    vector<vector<string>> list = utility::list(PATH);
+    vector<vector<string>> list = utility::search(PATH, { 4 }, kunjungan.nik_pengunjung);
 
     for(int index = 0; index < list.size(); index++) {
       vector<string> row = list[index];
-      if(row[2] == today && row[4] == kunjungan.nik_pengunjung) {
+      if(row[2] == today) {
         is_not_exist = false;
       }
     }
