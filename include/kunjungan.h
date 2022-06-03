@@ -180,7 +180,7 @@ namespace kunjungan {
     string keyword;
     utility::header("VISITME - CEK STATUS KUNJUNGAN");
     cout << "Masukkan Kode Kunjungan / NIK Anda: "; cin >> keyword;
-    vector<vector<string>> list = utility::search(PATH, { 0, 4 }, keyword);
+    vector<vector<string>> list = utility::search(PATH, { 0, 4 }, keyword, false, true);
 
     utility::header("VISITME - CEK STATUS KUNJUNGAN");
     if(list.size() > 0) {

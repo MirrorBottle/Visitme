@@ -17,6 +17,7 @@ int main() {
   bool is_login = false;
   int guess_choice, master_choice , main_choice, wbp_list_choice;
 
+  kunjungan::validate();
   while(is_running) {
     guess_choice = menu::guess();
     switch (guess_choice) {
