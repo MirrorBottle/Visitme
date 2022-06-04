@@ -83,7 +83,7 @@ namespace kamar {
       utility::cout("yellow", "*Apabila tidak ada perubahan maka isi dengan '-'!");
 
       cout << "Nama Kamar [" + old_kamar[1] + "]: "; cin >> new_kamar.nama;
-      new_kamar.kode = old_kamar[1];
+      new_kamar.kode = old_kamar[0];
       new_kamar.nama = new_kamar.nama != "-" ? new_kamar.nama : old_kamar[1];
 
       kamar::update(code, new_kamar);
